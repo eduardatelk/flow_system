@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "../api";
 
 export default function Login({ aoLogar }) {
-  const [email, setEmail] = useState("daiana@flow.com");
+  const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
