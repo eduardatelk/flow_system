@@ -21,7 +21,8 @@ usa um **ORM (Sequelize)** para representar as entidades como classes (models).
 
 ## Arquitetura
 
-- **Backend**: Node.js + Express + Sequelize (ORM) + SQLite — API REST, um
+- **Backend**: Node.js + Express + Sequelize (ORM) + SQLite (local) ou
+  Postgres (produção) — API REST, um
   arquivo de rotas por módulo, entidades modeladas como classes em `models/`.
 - **Frontend**: React + Vite — um componente por tela, sem dependências
   externas de UI, usando a paleta de cores definida no protótipo (PEX III).
@@ -30,6 +31,9 @@ usa um **ORM (Sequelize)** para representar as entidades como classes (models).
 
 ```
 flow-system/
+├── api/
+│   └── index.js            # entrada da API na Vercel
+├── vercel.json             # configuração do deploy
 ├── backend/
 │   ├── db/
 │   │   ├── sequelize.js   # instância/config do ORM (conexão SQLite)
@@ -102,6 +106,37 @@ entre as telas pelo menu lateral.
 
 > Alterações no frontend são recarregadas automaticamente pelo Vite. Alterações
 > no backend exigem reiniciá-lo (`Ctrl + C` e `npm start`).
+
+> O frontend chama a API em `/api`; durante o desenvolvimento o Vite repassa
+> essas chamadas para o backend em `http://localhost:3001`.
+
+## Deploy (Vercel + Neon)
+
+O projeto é publicado na Vercel como um único projeto: o frontend vira o site
+estático e o Express roda como função em `/api` (arquivos `vercel.json` e
+`api/index.js`).
+
+Na Vercel o disco não é permanente, então em produção o banco é um
+**Postgres na Neon**. O mesmo código escolhe o banco automaticamente:
+
+- sem a variável `DATABASE_URL` → SQLite local (`backend/db/flow.sqlite3`);
+- com `DATABASE_URL` → Postgres.
+
+Passos:
+
+1. Na Vercel, **Add New → Project** e importar o repositório do GitHub
+   (deixar a raiz do projeto como diretório raiz).
+2. Em **Storage**, criar um banco **Neon** e conectá-lo ao projeto (isso cria
+   a variável `DATABASE_URL`).
+3. Em **Settings → Environment Variables**, criar `JWT_SECRET` com um texto
+   longo e aleatório.
+4. Fazer o deploy. A cada `git push` na branch `main` a Vercel publica de novo.
+5. Popular o banco de produção uma única vez, a partir da pasta `backend`,
+   com a `DATABASE_URL` da Neon:
+
+   ```powershell
+   $env:DATABASE_URL="postgresql://..."; npm run seed
+   ```
 
 ## ORM e Models
 

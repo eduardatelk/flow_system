@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3001/api";
+const BASE_URL = "/api";
 const CHAVE_TOKEN = "flow_token";
 
 export function obterToken() {

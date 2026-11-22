@@ -6,23 +6,38 @@ const { padronizarTelefone } = require("../utils/telefone");
 
 const ERRO_TELEFONE = "Contato inválido. Informe DDD + número, ex.: (11) 98765-4321";
 
+function obterAgoraEmBrasilia() {
+  const partes = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(new Date())
+      .map((p) => [p.type, p.value])
+  );
+  return {
+    hoje: `${partes.year}-${partes.month}-${partes.day}`,
+    horaAtual: `${partes.hour}:${partes.minute}`,
+  };
+}
+
 const router = express.Router();
 router.use(autenticar);
 
 router.get("/", async (req, res) => {
   const { busca } = req.query;
+  const operadorBusca = Cliente.sequelize.getDialect() === "postgres" ? Op.iLike : Op.like;
   const alunos = await Cliente.findAll({
-    where: busca ? { nome: { [Op.like]: `%${busca}%` } } : undefined,
+    where: busca ? { nome: { [operadorBusca]: `%${busca}%` } } : undefined,
     order: [["nome", "ASC"]],
   });
 
-  const agora = new Date();
-  const hoje = [
-    agora.getFullYear(),
-    String(agora.getMonth() + 1).padStart(2, "0"),
-    String(agora.getDate()).padStart(2, "0"),
-  ].join("-");
-  const horaAtual = `${String(agora.getHours()).padStart(2, "0")}:${String(agora.getMinutes()).padStart(2, "0")}`;
+  const { hoje, horaAtual } = obterAgoraEmBrasilia();
 
   const jaRealizada = {
     [Op.or]: [

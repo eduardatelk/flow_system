@@ -1,5 +1,9 @@
 const jwt = require("jsonwebtoken");
 
+if (process.env.VERCEL && !process.env.JWT_SECRET) {
+  throw new Error("Defina a variável de ambiente JWT_SECRET na Vercel.");
+}
+
 const SEGREDO_JWT = process.env.JWT_SECRET || "flow-piloto-segredo-dev";
 
 function autenticar(req, res, next) {
