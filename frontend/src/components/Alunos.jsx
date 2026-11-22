@@ -122,14 +122,17 @@ export default function Alunos() {
         {!carregando &&
           alunos.map((aluno) => (
             <div className="linha" key={aluno.id_cliente}>
-              <div>
+              <div className="linha__info">
                 <div className="linha__principal">{aluno.nome}</div>
                 <div className="linha__secundaria">
                   {validarTelefone(aluno.contato) ? formatarTelefone(aluno.contato) : aluno.contato}
                 </div>
+                <div className="linha__secundaria linha__so-celular">
+                  Aulas realizadas: <strong>{aluno.aulas_realizadas}</strong>
+                </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ textAlign: "right" }}>
+              <div className="linha__acoes">
+                <div className="linha__contador">
                   <div className="linha__secundaria">Aulas Realizadas</div>
                   <div className="linha__principal">{aluno.aulas_realizadas}</div>
                 </div>

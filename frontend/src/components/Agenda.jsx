@@ -290,12 +290,12 @@ export default function Agenda() {
         {!carregando &&
           aulasDoDia.map((aula) => (
             <div className="linha" key={aula.id_aula}>
-              <div>
+              <div className="linha__info">
                 <div className="linha__principal">{aula.aluno_nome}</div>
                 <div className="linha__secundaria">{aula.tipo_aula}</div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div className="linha__principal" style={{ marginRight: 8 }}>{aula.horario}</div>
+              <div className="linha__acoes">
+                <div className="linha__principal linha__horario">{aula.horario}</div>
                 <button
                   className="botao-icone"
                   title="Editar aula"
